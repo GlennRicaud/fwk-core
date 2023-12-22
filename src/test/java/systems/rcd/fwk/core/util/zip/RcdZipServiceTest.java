@@ -40,7 +40,9 @@ public class RcdZipServiceTest
 
         //Tests zip and unzip
         final Path zipPath = tgtDirectory.toPath().resolve( "srcAndFile2.zip" );
-        RcdZipService.zip( zipPath, srcDirectory.toPath(), file2.toPath() );
+        RcdZipService.zip( zipPath, (src, path) -> {
+            System.out.printf("Zip listener: [%s][%s]\n", src.toString(), path.toString());
+        },  srcDirectory.toPath(), file2.toPath() );
         Assert.assertTrue( RcdFileService.getSize( zipPath ) > 0 );
         RcdZipService.unzip( zipPath, srcBisDirectory.toPath() );
 

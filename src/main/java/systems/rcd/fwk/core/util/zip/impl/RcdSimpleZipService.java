@@ -13,6 +13,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.util.function.BiConsumer;
 import java.util.function.Predicate;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -28,7 +29,7 @@ public class RcdSimpleZipService
     static final int BUFFER_SIZE = 2048;
 
     @Override
-    public void instZip( final Path target, final Path... sources )
+    public void instZip(final Path target, final BiConsumer<Path, Path> listener, final Path... sources )
     {
         try (ZipOutputStream zipOutputStream = new ZipOutputStream( new BufferedOutputStream( new FileOutputStream( target.toFile() ) ) ))
         {
@@ -43,6 +44,9 @@ public class RcdSimpleZipService
                         throws IOException
                     {
                         final Path relativeFilePath = source.getFileName().resolve( source.relativize( file ) );
+                        if (listener != null) {
+                            listener.accept(source, relativeFilePath);
+                        }
                         final String relativeUnixPathString = RcdPathService.toUnixPathString( relativeFilePath );
                         final ZipEntry zipEntry = new ZipEntry( relativeUnixPathString );
                         zipOutputStream.putNextEntry( zipEntry );
