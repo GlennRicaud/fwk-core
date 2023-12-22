@@ -83,7 +83,7 @@ public class RcdZipServiceTest
         final File tgtDirectory = temporaryFolder.newFolder( "macos-filtered" );
         final Path zipPath = Paths.get( getClass().getResource( "macos.zip" ).toURI() );
         Predicate<ZipEntry> filter = zipEntry -> !zipEntry.getName().startsWith( "__MACOSX/" );
-        RcdZipService.unzip( zipPath, tgtDirectory.toPath(), filter );
+        RcdZipService.unzip( zipPath, tgtDirectory.toPath(), filter, null );
 
         final AtomicInteger counter = new AtomicInteger();
         RcdFileService.listSubPaths( tgtDirectory.toPath(), path -> counter.incrementAndGet() );

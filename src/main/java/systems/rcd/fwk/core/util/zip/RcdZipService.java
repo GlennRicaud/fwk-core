@@ -2,6 +2,7 @@ package systems.rcd.fwk.core.util.zip;
 
 import java.nio.file.Path;
 import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.zip.ZipEntry;
 
@@ -18,16 +19,16 @@ public interface RcdZipService
 
     static void unzip( final Path source, final Path target )
     {
-        RcdContext.getService( RcdZipService.class ).instUnzip( source, target, null );
+        RcdContext.getService( RcdZipService.class ).instUnzip( source, target, null, null );
     }
 
-    static void unzip( final Path source, final Path target, final Predicate<ZipEntry> filter )
+    static void unzip( final Path source, final Path target, final Predicate<ZipEntry> filter, final Consumer<Path> listener)
     {
-        RcdContext.getService( RcdZipService.class ).instUnzip( source, target, filter );
+        RcdContext.getService( RcdZipService.class ).instUnzip( source, target, filter, listener );
     }
 
     void instZip(final Path directory, final BiConsumer<Path, Path> listener, final Path... sources );
 
-    void instUnzip( final Path source, final Path target, final Predicate<ZipEntry> filter );
+    void instUnzip( final Path source, final Path target, final Predicate<ZipEntry> filter, final Consumer<Path> listener);
 }
    

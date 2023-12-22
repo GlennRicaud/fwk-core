@@ -14,6 +14,7 @@ import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -73,7 +74,7 @@ public class RcdSimpleZipService
     }
 
     @Override
-    public void instUnzip( final Path source, final Path target, final Predicate<ZipEntry> filter )
+    public void instUnzip( final Path source, final Path target, final Predicate<ZipEntry> filter, final Consumer<Path> listener)
     {
         try (ZipInputStream zipInputStream = new ZipInputStream( new BufferedInputStream( new FileInputStream( source.toFile() ) ) ))
         {
@@ -87,7 +88,8 @@ public class RcdSimpleZipService
                     continue;
                 }
 
-                final File targetFile = target.resolve( entry.getName() ).toFile();
+                final Path relativeFilePath = target.resolve( entry.getName() );
+                final File targetFile = relativeFilePath.toFile();
                 targetFile.getParentFile().mkdirs();
                 if ( entry.isDirectory() )
                 {
@@ -96,6 +98,9 @@ public class RcdSimpleZipService
                 else
                 {
                     targetFile.createNewFile();
+                    if (listener != null) {
+                        listener.accept(relativeFilePath);
+                    }
                     try (OutputStream outputStream = new BufferedOutputStream( new FileOutputStream( targetFile ), BUFFER_SIZE );)
                     {
                         int bytesCount;
